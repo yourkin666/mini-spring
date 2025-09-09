@@ -21,11 +21,14 @@ AnnotationConfigApplicationContext (应用上下文)
 ### 1. 容器初始化阶段
 
 #### 1.1 构造函数调用
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java`
+
 ```java
 // 用户代码
 AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
-// 内部执行链路
+// 内部执行链路 - AnnotationConfigApplicationContext.java:43-47
 public AnnotationConfigApplicationContext(Class<?>... configClasses) {
     this(); // 调用无参构造函数
     register(configClasses); // 注册配置类
@@ -34,6 +37,9 @@ public AnnotationConfigApplicationContext(Class<?>... configClasses) {
 ```
 
 #### 1.2 无参构造函数执行
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java:31-41`
+
 ```java
 public AnnotationConfigApplicationContext() {
     this.beanFactory = new DefaultBeanFactory();           // ✅ 创建Bean工厂
@@ -48,6 +54,9 @@ public AnnotationConfigApplicationContext() {
 ```
 
 #### 1.3 DefaultBeanFactory 初始化
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:17-33`
+
 ```java
 public class DefaultBeanFactory implements BeanFactory {
     // 三级缓存 - Spring循环依赖解决方案
@@ -69,6 +78,8 @@ public class DefaultBeanFactory implements BeanFactory {
 
 ### 2. 配置类注册阶段
 
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java:52-56`
+
 ```java
 // 注册配置类
 public void register(Class<?>... configClasses) {
@@ -79,6 +90,8 @@ public void register(Class<?>... configClasses) {
 ```
 
 ### 3. 容器刷新阶段 (refresh)
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java:71-87`
 
 ```java
 @Override
@@ -104,6 +117,9 @@ public void refresh() {
 ## 🔍 配置类处理链路
 
 ### 3.1 processConfigurationClasses()
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java:92-96`
+
 ```java
 private void processConfigurationClasses() {
     for (Class<?> configClass : configurationClasses) {
@@ -113,6 +129,9 @@ private void processConfigurationClasses() {
 ```
 
 ### 3.2 processConfigurationClass()
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java:101-124`
+
 ```java
 private void processConfigurationClass(Class<?> configClass) {
     // 1️⃣ 注册配置类本身
@@ -137,6 +156,9 @@ private void processConfigurationClass(Class<?> configClass) {
 ## 📦 组件扫描链路
 
 ### 4.1 ComponentScanner.scan()
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/ComponentScanner.java:20-39`
+
 ```java
 public Set<Class<?>> scan(String basePackage) {
     Set<Class<?>> components = new HashSet<>();
@@ -160,6 +182,9 @@ public Set<Class<?>> scan(String basePackage) {
 ```
 
 ### 4.2 registerBean() - Bean注册
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java:129-146`
+
 ```java
 private void registerBean(Class<?> beanClass) {
     String beanName = determineBeanName(beanClass);  // ✅ 确定Bean名称
@@ -184,6 +209,9 @@ private void registerBean(Class<?> beanClass) {
 ## 🏭 Bean实例化链路
 
 ### 5.1 preInstantiateSingletons() - 预实例化
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java:165-184`
+
 ```java
 private void preInstantiateSingletons() {
     String[] beanNames = beanFactory.getBeanDefinitionNames();
@@ -208,6 +236,9 @@ private void preInstantiateSingletons() {
 ```
 
 ### 5.2 getBean() - 获取Bean入口
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:36-38`
+
 ```java
 @Override
 public Object getBean(String name) throws BeansException {
@@ -216,6 +247,9 @@ public Object getBean(String name) throws BeansException {
 ```
 
 ### 5.3 doGetBean() - 核心获取逻辑
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:64-84`
+
 ```java
 protected Object doGetBean(String name, Class<?> requiredType) throws BeansException {
     // 1️⃣ 尝试从三级缓存获取
@@ -243,6 +277,9 @@ protected Object doGetBean(String name, Class<?> requiredType) throws BeansExcep
 ## 🔄 三级缓存循环依赖解决
 
 ### 6.1 三级缓存查找
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:89-103`
+
 ```java
 protected Object getSingleton(String beanName) {
     // 1️⃣ 一级缓存：完成的单例对象
@@ -268,6 +305,9 @@ protected Object getSingleton(String beanName) {
 ```
 
 ### 6.2 getSingleton() - 带工厂方法
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:108-122`
+
 ```java
 protected Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
     synchronized (singletonObjects) {
@@ -289,6 +329,9 @@ protected Object getSingleton(String beanName, ObjectFactory<?> singletonFactory
 ## 🔨 Bean创建详细链路
 
 ### 7.1 createBean() - Bean创建入口
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:127-147`
+
 ```java
 protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
     try {
@@ -314,6 +357,9 @@ protected Object createBean(String beanName, BeanDefinition beanDefinition) thro
 ```
 
 ### 7.2 createBeanInstance() - 实例创建
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:152-174`
+
 ```java
 protected Object createBeanInstance(String beanName, BeanDefinition beanDefinition) throws Exception {
     Class<?> beanClass = beanDefinition.getBeanClass();
@@ -342,6 +388,9 @@ protected Object createBeanInstance(String beanName, BeanDefinition beanDefiniti
 ```
 
 ### 7.3 populateBean() - 属性注入
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:179-210`
+
 ```java
 protected void populateBean(String beanName, BeanDefinition beanDefinition, Object bean) throws Exception {
     Class<?> beanClass = bean.getClass();
@@ -379,6 +428,9 @@ protected void populateBean(String beanName, BeanDefinition beanDefinition, Obje
 ```
 
 ### 7.4 initializeBean() - Bean初始化
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:215-226`
+
 ```java
 protected Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) throws Exception {
     // 1️⃣ 调用BeanPostProcessor前置处理
@@ -395,6 +447,9 @@ protected Object initializeBean(String beanName, Object bean, BeanDefinition bea
 ```
 
 ### 7.5 invokeInitMethods() - 初始化方法调用
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:231-245`
+
 ```java
 protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) throws Exception {
     // 1️⃣ 调用@PostConstruct方法
@@ -416,6 +471,9 @@ protected void invokeInitMethods(String beanName, Object bean, BeanDefinition be
 ## 🔧 依赖解析链路
 
 ### 8.1 resolveDependency() - 依赖解析
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:367-384`
+
 ```java
 protected Object resolveDependency(Class<?> type, String name) throws Exception {
     String[] beanNames = getBeanNamesForType(type);  // ✅ 按类型查找Bean
@@ -440,6 +498,9 @@ protected Object resolveDependency(Class<?> type, String name) throws Exception 
 ```
 
 ### 8.2 getBeanNamesForType() - 按类型查找Bean
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:307-316`
+
 ```java
 public String[] getBeanNamesForType(Class<?> type) {
     List<String> result = new ArrayList<>();
@@ -456,6 +517,9 @@ public String[] getBeanNamesForType(Class<?> type) {
 ## 🎯 后置处理器链路
 
 ### 9.1 applyBeanPostProcessorsBeforeInitialization()
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:252-262`
+
 ```java
 protected Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException {
     Object result = existingBean;
@@ -471,6 +535,9 @@ protected Object applyBeanPostProcessorsBeforeInitialization(Object existingBean
 ```
 
 ### 9.2 applyBeanPostProcessorsAfterInitialization()
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java:264-274`
+
 ```java
 protected Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException {
     Object result = existingBean;
@@ -575,6 +642,9 @@ sequenceDiagram
 ## 📊 关键数据结构
 
 ### BeanDefinition - Bean元数据
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/BeanDefinition.java:10-98`
+
 ```java
 public class BeanDefinition {
     private Class<?> beanClass;                           // Bean类型
@@ -619,6 +689,9 @@ Map<String, ObjectFactory<?>> singletonFactories
 ## 🛠️ 扩展点
 
 ### 1. **BeanPostProcessor**
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/BeanPostProcessor.java`
+
 ```java
 // 可在Bean初始化前后插入自定义逻辑
 public interface BeanPostProcessor {
@@ -628,6 +701,9 @@ public interface BeanPostProcessor {
 ```
 
 ### 2. **ApplicationContextAware**
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/context/ApplicationContextAware.java`
+
 ```java
 // Bean可获取ApplicationContext引用
 public interface ApplicationContextAware {
@@ -636,6 +712,9 @@ public interface ApplicationContextAware {
 ```
 
 ### 3. **InitializingBean & DisposableBean**
+
+**📁 文件位置**: `src/main/java/com/minispring/ioc/beans/InitializingBean.java` & `src/main/java/com/minispring/ioc/beans/DisposableBean.java`
+
 ```java
 // Bean生命周期回调接口
 public interface InitializingBean {
@@ -659,3 +738,86 @@ Mini Spring IOC 容器完整实现了：
 6. **✅ 完整的容器生命周期** - 从启动到关闭的完整流程
 
 这个实现充分体现了Spring IOC的核心设计理念：**控制反转**、**依赖注入**、**面向接口编程**，是学习Spring框架原理的绝佳参考。
+
+## 📂 完整文件结构索引
+
+### 🏗️ 核心容器组件
+
+| 组件 | 文件位置 | 主要职责 | 关键方法 |
+|------|----------|----------|----------|
+| **AnnotationConfigApplicationContext** | `src/main/java/com/minispring/ioc/context/AnnotationConfigApplicationContext.java` | 注解驱动的应用上下文 | `refresh()`, `processConfigurationClasses()` |
+| **DefaultBeanFactory** | `src/main/java/com/minispring/ioc/beans/DefaultBeanFactory.java` | 默认Bean工厂实现 | `doGetBean()`, `createBean()`, `populateBean()` |
+| **ComponentScanner** | `src/main/java/com/minispring/ioc/context/ComponentScanner.java` | 组件包扫描器 | `scan()` |
+| **BeanDefinition** | `src/main/java/com/minispring/ioc/beans/BeanDefinition.java` | Bean元数据定义 | `getBeanClass()`, `isSingleton()` |
+
+### 🔧 注解定义
+
+| 注解 | 文件位置 | 用途 |
+|------|----------|------|
+| **@Component** | `src/main/java/com/minispring/ioc/annotation/Component.java` | 标记组件类 |
+| **@ComponentScan** | `src/main/java/com/minispring/ioc/annotation/ComponentScan.java` | 配置包扫描 |
+| **@Autowired** | `src/main/java/com/minispring/ioc/annotation/Autowired.java` | 依赖注入 |
+| **@Value** | `src/main/java/com/minispring/ioc/annotation/Value.java` | 值注入 |
+| **@PostConstruct** | `src/main/java/com/minispring/ioc/annotation/PostConstruct.java` | 初始化回调 |
+| **@PreDestroy** | `src/main/java/com/minispring/ioc/annotation/PreDestroy.java` | 销毁回调 |
+
+### 🔌 扩展接口
+
+| 接口 | 文件位置 | 用途 | 关键方法 |
+|------|----------|------|----------|
+| **BeanFactory** | `src/main/java/com/minispring/ioc/beans/BeanFactory.java` | Bean工厂基础接口 | `getBean()`, `containsBean()` |
+| **ApplicationContext** | `src/main/java/com/minispring/ioc/context/ApplicationContext.java` | 应用上下文接口 | `refresh()`, `getBeansOfType()` |
+| **BeanPostProcessor** | `src/main/java/com/minispring/ioc/beans/BeanPostProcessor.java` | Bean后置处理器 | `postProcessBeforeInitialization()` |
+| **ApplicationContextAware** | `src/main/java/com/minispring/ioc/context/ApplicationContextAware.java` | 上下文感知接口 | `setApplicationContext()` |
+| **InitializingBean** | `src/main/java/com/minispring/ioc/beans/InitializingBean.java` | 初始化回调接口 | `afterPropertiesSet()` |
+| **DisposableBean** | `src/main/java/com/minispring/ioc/beans/DisposableBean.java` | 销毁回调接口 | `destroy()` |
+
+### ⚠️ 异常处理
+
+| 异常类 | 文件位置 | 使用场景 |
+|--------|----------|----------|
+| **BeansException** | `src/main/java/com/minispring/ioc/beans/BeansException.java` | Bean操作基础异常 |
+| **BeanCreationException** | `src/main/java/com/minispring/ioc/beans/BeanCreationException.java` | Bean创建失败 |
+| **BeanCurrentlyInCreationException** | `src/main/java/com/minispring/ioc/beans/BeanCurrentlyInCreationException.java` | 循环依赖检测 |
+| **NoSuchBeanDefinitionException** | `src/main/java/com/minispring/ioc/beans/NoSuchBeanDefinitionException.java` | Bean定义不存在 |
+
+### 🛠️ 工具类
+
+| 工具类 | 文件位置 | 功能 |
+|--------|----------|------|
+| **ReflectionUtils** | `src/main/java/com/minispring/ioc/core/ReflectionUtils.java` | 反射操作工具 |
+| **TypeConverter** | `src/main/java/com/minispring/ioc/core/TypeConverter.java` | 类型转换工具 |
+| **PropertyValue** | `src/main/java/com/minispring/ioc/beans/PropertyValue.java` | 属性值封装 |
+| **ConstructorArgument** | `src/main/java/com/minispring/ioc/beans/ConstructorArgument.java` | 构造参数封装 |
+
+### 🎯 使用示例
+
+| 示例类 | 文件位置 | 演示功能 |
+|--------|----------|----------|
+| **IocDemo** | `src/main/java/com/minispring/example/ioc/IocDemo.java` | IOC基础使用 |
+| **IocConfig** | `src/main/java/com/minispring/example/ioc/IocConfig.java` | 配置类示例 |
+| **UserService** | `src/main/java/com/minispring/example/ioc/UserService.java` | 服务层示例 |
+| **UserRepository** | `src/main/java/com/minispring/example/ioc/UserRepository.java` | 数据层示例 |
+
+### 📋 快速定位指南
+
+#### 🔍 按功能查找
+- **容器启动**: `AnnotationConfigApplicationContext.java:71-87`
+- **Bean创建**: `DefaultBeanFactory.java:127-147`
+- **三级缓存**: `DefaultBeanFactory.java:20-22`
+- **依赖注入**: `DefaultBeanFactory.java:179-210`
+- **生命周期**: `DefaultBeanFactory.java:215-245`
+
+#### 🔍 按问题查找
+- **循环依赖解决**: `DefaultBeanFactory.java:89-122`
+- **类型匹配查找**: `DefaultBeanFactory.java:307-316`
+- **包扫描机制**: `ComponentScanner.java:20-39`
+- **后置处理器**: `DefaultBeanFactory.java:252-274`
+
+#### 🔍 按接口查找
+- **核心接口**: `BeanFactory.java`, `ApplicationContext.java`
+- **扩展接口**: `BeanPostProcessor.java`, `ApplicationContextAware.java`
+- **生命周期接口**: `InitializingBean.java`, `DisposableBean.java`
+- **注解定义**: `annotation/` 目录下所有文件
+
+这个索引可以帮助你快速定位到感兴趣的代码片段，深入理解Spring IOC的实现原理！
