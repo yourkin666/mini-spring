@@ -43,9 +43,9 @@ public class AnnotationConfigApplicationContext implements ApplicationContext, C
     public AnnotationConfigApplicationContext(Class<?>... configClasses) {
         this();
         register(configClasses);
-        refresh();
+        refresh(); 
     }
-    
+     
     /**
      * 注册配置类
      */

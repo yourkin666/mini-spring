@@ -138,7 +138,7 @@ public class AopBeanPostProcessor implements BeanPostProcessor, DefaultBeanFacto
             // 使用ProxyFactory创建CGLIB代理
             ProxyFactory proxyFactory = new ProxyFactory(bean, allAspectInfos);
             Object proxy = proxyFactory.getProxy();
-            
+              
             // 缓存代理对象
             proxyCache.put(beanName, proxy);
             
