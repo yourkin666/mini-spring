@@ -324,4 +324,5 @@ public class UserController {
 ### 技术文档
 - 📖 **[IOC代码链路详解](docs/IOC_CODE_FLOW.md)** - 详细分析IOC容器执行流程
 - 🌐 **[MVC代码链路详解](docs/MVC_CODE_FLOW.md)** - 详细分析Spring MVC请求处理流程
+- ⚡ **[AOP代码链路详解](docs/AOP_CODE_FLOW.md)** - 详细分析面向切面编程执行流程
 - 📋 **[最终代码审视报告](FINAL_REVIEW.md)** - 代码质量和设计理念评估
